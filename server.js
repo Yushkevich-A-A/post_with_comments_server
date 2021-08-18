@@ -5,7 +5,8 @@ const Router = require('koa-router');
 const json = require('koa-json');
 const router = new Router();
 const uuid = require('uuid');
-
+const { ArrPosts } = require('./ArrPosts/ArrPosts');
+const posts = new ArrPosts();
 
 app.use(json());
 
@@ -44,6 +45,20 @@ app.use( async (ctx, next) => {
 const port = process.env.PORT || 7070;
 const server = http.createServer(app.callback());
 
+router.get('/posts/latest', (ctx) => {
+  ctx.response.body = {
+    status: 'ok',
+    data: posts.getLastPosts()
+  }
+})
+
+router.get('/posts/:posts_id/comments/latest', (ctx) => {
+  const id = +ctx.params.posts_id;
+  ctx.response.body = {
+    status: 'ok',
+    data: posts.getLastComments(id),
+  }
+})
 
 app.use(router.routes());
 app.use(router.allowedMethods());
